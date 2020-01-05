@@ -1,6 +1,5 @@
 package com.mycompany.myapp.config;
 
-import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -11,21 +10,27 @@ public class PrefixedSimpleKey implements Serializable {
 
     private final String prefix;
     private final Object[] params;
-    private final int hashCode;
+    private final String methodName;
+    private int hashCode;
 
-    public PrefixedSimpleKey(String prefix, Object... elements) {
+    public PrefixedSimpleKey(String prefix, String methodName, Object... elements) {
         Assert.notNull(prefix, "Prefix must not be null");
         Assert.notNull(elements, "Elements must not be null");
         this.prefix = prefix;
+        this.methodName = methodName;
         this.params = new Object[elements.length];
         System.arraycopy(elements, 0, this.params, 0, elements.length);
-        this.hashCode = 31 * prefix.hashCode() + Arrays.deepHashCode(this.params);
+        this.hashCode = prefix.hashCode();
+        this.hashCode = 31 * this.hashCode + methodName.hashCode();
+        this.hashCode = 31 * this.hashCode + Arrays.deepHashCode(this.params);
     }
 
     @Override
     public boolean equals(Object other) {
         return (this == other ||
-            (other instanceof PrefixedSimpleKey && this.prefix.equals(((PrefixedSimpleKey) other).prefix) && Arrays.deepEquals(this.params, ((PrefixedSimpleKey) other).params)));
+            (other instanceof PrefixedSimpleKey && this.prefix.equals(((PrefixedSimpleKey) other).prefix) &&
+                this.methodName.equals(((PrefixedSimpleKey) other).methodName) &&
+                Arrays.deepEquals(this.params, ((PrefixedSimpleKey) other).params)));
     }
 
     @Override
@@ -35,7 +40,7 @@ public class PrefixedSimpleKey implements Serializable {
 
     @Override
     public String toString() {
-        return prefix + " " + getClass().getSimpleName() + " [" + StringUtils.arrayToCommaDelimitedString(this.params) + "]";
+        return this.prefix + " " + getClass().getSimpleName() + this.methodName + " [" + StringUtils.arrayToCommaDelimitedString(this.params) + "]";
     }
 
 }

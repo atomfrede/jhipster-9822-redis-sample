@@ -1,9 +1,7 @@
 package com.mycompany.myapp.config;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -18,13 +16,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 import org.hibernate.cache.jcache.ConfigSettings;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.cache.configuration.MutableConfiguration;
@@ -40,7 +33,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
     @Autowired(required = false)
     GitProperties gitProperties;
 
-    @Autowired
+    @Autowired(required = false)
     BuildProperties buildProperties;
 
     @Bean
@@ -56,7 +49,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
         } else {
             prefix = prefixObject.toString();
         }
-        return new JHipsterKeyGenerator(prefix);
+        return new PrefixedKeyGenerator(prefix);
     }
 
     @Bean
