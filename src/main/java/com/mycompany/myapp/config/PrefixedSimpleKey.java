@@ -19,7 +19,7 @@ public class PrefixedSimpleKey implements Serializable {
         this.prefix = prefix;
         this.params = new Object[elements.length];
         System.arraycopy(elements, 0, this.params, 0, elements.length);
-        this.hashCode = prefix.hashCode() + Arrays.deepHashCode(this.params);
+        this.hashCode = 31 * prefix.hashCode() + Arrays.deepHashCode(this.params);
     }
 
     @Override

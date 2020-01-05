@@ -56,8 +56,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
         } else {
             prefix = prefixObject.toString();
         }
-        System.out.println(prefix);
-        return new JHipsterKeyGenerator(gitProperties.getShortCommitId());
+        return new JHipsterKeyGenerator(prefix);
     }
 
     @Bean
@@ -72,12 +71,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
 
     @Bean
     public HibernatePropertiesCustomizer hibernatePropertiesCustomizer(javax.cache.CacheManager cm) {
-
-        Map<String, Object> hibernateProperties = new HashMap<>();
-        hibernateProperties .put("hibernate.cache.region_prefix ", gitProperties.getShortCommitId());
-        hibernateProperties.put(ConfigSettings.CACHE_MANAGER, cm);
-
-        return hibernateProperties1 -> hibernateProperties1.putAll(hibernateProperties);
+        return hibernateProperties -> hibernateProperties.put(ConfigSettings.CACHE_MANAGER, cm);
     }
 
     @Bean
